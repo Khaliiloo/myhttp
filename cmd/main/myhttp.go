@@ -3,13 +3,11 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"github.com/Khaliiloo/myhttp/request"
 	"github.com/Khaliiloo/myhttp/workpool"
 	"io"
 	"log"
 	"os"
-	"time"
 )
 
 // CMD stores parallel flag and received URLs
@@ -28,10 +26,6 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 
-	defer func(t time.Time) {
-		fmt.Println("Took ", time.Since(t))
-	}(time.Now())
-
 	parallel := flag.Int("parallel", -1, "limits the number of parallel/concurred requests")
 	flag.Parse()
 
@@ -45,9 +39,15 @@ func main() {
 		return
 	}
 
-	if cmd.Parallel == -1 {
+	if cmd.Parallel == -1 || cmd.Parallel > len(cmd.URLs) {
 		cmd.Parallel = len(cmd.URLs)
 	}
+
+	/* just to check time of execution with different parallel values
+	defer func(t time.Time) {
+		fmt.Println(cmd.Parallel, "parallel took", time.Since(t))
+	}(time.Now())
+	*/
 
 	wp := workpool.NewWorkerPool(cmd.Parallel)
 
