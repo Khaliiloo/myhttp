@@ -4,7 +4,7 @@ myhttp is a tool for making requests to multiple URLs concurrently and display t
 
 It was built using [@Go](https://go.dev) programming language.
 
-##Usage
+## Usage
 ```
 myhttp [-parallel] url1 url2 ...
 ```
