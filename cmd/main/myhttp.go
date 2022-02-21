@@ -26,7 +26,7 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 
-	parallel := flag.Int("parallel", -1, "limits the number of parallel/concurred requests")
+	parallel := flag.Int("parallel", 10, "limits the number of parallel/concurred requests")
 	flag.Parse()
 
 	var cmd = CMD{
@@ -39,7 +39,8 @@ func main() {
 		return
 	}
 
-	if cmd.Parallel == -1 || cmd.Parallel > len(cmd.URLs) {
+	// no reason to make number of workers more than URLs
+	if cmd.Parallel > len(cmd.URLs) {
 		cmd.Parallel = len(cmd.URLs)
 	}
 
@@ -48,7 +49,6 @@ func main() {
 		fmt.Println(cmd.Parallel, "parallel took", time.Since(t))
 	}(time.Now())
 	*/
-
 	wp := workpool.NewWorkerPool(cmd.Parallel)
 
 	ctx, cancel := context.WithCancel(context.TODO())
@@ -76,6 +76,7 @@ func main() {
 
 }
 
+// collectRequests takes slice of URL and converts them to slice of request.Request
 func collectRequests(URLs []string) []request.Request {
 	nOfRequests := len(URLs)
 	requests := make([]request.Request, nOfRequests)
