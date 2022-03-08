@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-// worker receives request.Request from jobs channel and calls request.Request.SendRequest() to send response.Response in results channel
+// worker receives request.Request from jobs channel and calls request.Request.SendRequest() to send response.Response over results channel
 func worker(ctx context.Context, wg *sync.WaitGroup, jobs <-chan request.Request, results chan<- response.Response) {
 	defer wg.Done()
 	for {
